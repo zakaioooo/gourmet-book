@@ -11,6 +11,7 @@ import { OrderButton } from "@/components/kennedy/OrderButton";
 import { PizzaMascot } from "@/components/kennedy/PizzaMascot";
 import { BonusTape } from "@/components/kennedy/BonusTape";
 import { MenuShowcase } from "@/components/kennedy/MenuShowcase";
+import { MenuBook } from "@/components/kennedy/MenuBook";
 import { SliceGallery } from "@/components/kennedy/SliceGallery";
 import { MascotFooter } from "@/components/kennedy/MascotFooter";
 import { VoiceOrderButton } from "@/components/kennedy/VoiceOrderButton";
@@ -336,6 +337,10 @@ function Index() {
 
         <div className="relative z-10">
           <MenuShowcase />
+        </div>
+
+        <div className="relative z-10">
+          <MenuBook />
         </div>
       </div>
 
