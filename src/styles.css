@@ -1525,3 +1525,575 @@
   background: oklch(1 0 0 / 0.85) !important;
   color: var(--color-charcoal, oklch(0.22 0.02 40)) !important;
 }
+
+/* ── Interactive menu book (Kennedy candy-luxe theme) ──────────────── */
+
+@property --page-rotate {
+  syntax: "<angle>";
+  inherits: true;
+  initial-value: 0deg;
+}
+@property --spine-shift {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
+}
+
+.menu-scene {
+  --book-ember: oklch(0.585 0.238 27.5 / 0.42);
+  --book-ember-soft: oklch(0.47 0.2 27.5 / 0.5);
+  --book-ember-line: oklch(0.585 0.238 27.5);
+  --book-gold: var(--color-gold);
+  --book-char: oklch(0.19 0.028 40);
+  --book-grain: oklch(1 0 0 / 0.05);
+  --book-paper: var(--color-cream);
+  --book-paper-warm: var(--color-cream-deep);
+  --book-page-edge: oklch(0.28 0.03 40 / 0.28);
+  --book-ink: var(--color-charcoal);
+  --book-ink-soft: oklch(0.42 0.03 45);
+  --book-fg: oklch(0.97 0.02 84);
+  --book-fg-soft: oklch(0.85 0.03 80 / 0.75);
+
+  position: relative;
+  width: 100%;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: clamp(1.5rem, 4vh, 3rem);
+  padding: clamp(2.5rem, 7vh, 5rem) 1.25rem;
+  overflow: hidden;
+  perspective: 1400px;
+  transform-style: preserve-3d;
+  background:
+    radial-gradient(120% 90% at 50% 0%, var(--book-ember-soft) 0%, transparent 60%),
+    var(--book-char);
+}
+
+.menu-scene::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(var(--book-grain) 1px, transparent 1px);
+  background-size: 4px 4px;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.menu-scene__glow {
+  position: absolute;
+  left: 50%;
+  top: 55%;
+  width: min(70vw, 720px);
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, var(--book-ember) 0%, transparent 65%);
+  filter: blur(20px);
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.menu-bg-type {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 4vw;
+  font-family: var(--font-hero);
+  letter-spacing: -0.04em;
+  font-size: clamp(3.5rem, 14vw, 13rem);
+  line-height: 0.8;
+  color: var(--book-fg);
+  mix-blend-mode: exclusion;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.menu-head {
+  position: relative;
+  z-index: 12;
+  text-align: center;
+}
+
+.menu-head__kicker {
+  display: inline-block;
+  font-family: var(--font-poster);
+  font-size: 1.6rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--book-gold);
+}
+
+.menu-head__title {
+  margin-top: 0.35rem;
+  font-family: var(--font-hero);
+  font-size: clamp(2.4rem, 8vw, 5.5rem);
+  line-height: 0.92;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--book-fg);
+  text-shadow: 0 14px 30px oklch(0 0 0 / 0.55);
+}
+
+.menu-head__hint {
+  margin-top: 0.7rem;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--book-fg-soft);
+}
+
+.menu-book {
+  position: relative;
+  width: 240px;
+  height: 340px;
+  perspective: 1400px;
+  transform-style: preserve-3d;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+  --spine-shift: 0px;
+  --tilt-x: 8deg;
+  --tilt-y: -16deg;
+  transform: rotateX(var(--tilt-x)) rotateY(var(--tilt-y)) translateX(var(--spine-shift));
+  transition:
+    --spine-shift 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  animation: book-float 7s ease-in-out infinite;
+}
+
+.menu-book:hover {
+  --tilt-y: -8deg;
+  --tilt-x: 4deg;
+}
+
+.menu-book.is-open {
+  --spine-shift: 120px;
+  --tilt-y: -4deg;
+  --tilt-x: 3deg;
+}
+
+@keyframes book-float {
+  0%,
+  100% {
+    translate: 0 -4px;
+  }
+  50% {
+    translate: 0 6px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu-book {
+    animation: none;
+  }
+}
+
+.menu-book::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 4px 10px 10px 4px;
+  background: linear-gradient(90deg, var(--book-ink) 0 6px, var(--book-paper-warm) 6px);
+  transform: translateZ(-14px) translateX(6px) scale(1.008);
+  box-shadow: 0 30px 50px -18px oklch(0 0 0 / 0.85);
+}
+
+.menu-book::after {
+  content: "";
+  position: absolute;
+  bottom: -26px;
+  left: 50%;
+  width: 78%;
+  height: 24px;
+  transform: translateX(-50%);
+  background: radial-gradient(50% 50% at 50% 50%, oklch(0 0 0 / 0.55), transparent 70%);
+  filter: blur(6px);
+}
+
+.menu-book__page {
+  position: absolute;
+  width: 240px;
+  height: 340px;
+  padding: 0;
+  border: 0;
+  background: var(--book-paper);
+  border-radius: 3px 8px 8px 3px;
+  perspective: 1400px;
+  transform-style: preserve-3d;
+  transform-origin: left center;
+  cursor: pointer;
+  text-align: left;
+  --page-rotate: 0deg;
+  transform: rotateY(var(--page-rotate));
+  transition:
+    --page-rotate 0.75s cubic-bezier(0.34, 1.36, 0.42, 1),
+    z-index 0s,
+    filter 0.4s ease;
+  transition-delay:
+    calc((4 - var(--i)) * 0.1s),
+    calc((4 - var(--i)) * 0.1s + 0.25s);
+  box-shadow:
+    3px 6px 22px oklch(0 0 0 / 0.5),
+    inset 0 0 0 1px var(--book-page-edge),
+    inset -3px 0 6px -3px oklch(0 0 0 / 0.35);
+  z-index: calc(10 - var(--i));
+}
+
+.menu-book__page:hover {
+  filter: brightness(1.06) saturate(1.06);
+}
+
+.menu-book__page:focus-visible {
+  outline: 2px solid var(--book-gold);
+  outline-offset: 4px;
+}
+
+.menu-book__page.is-open {
+  --page-rotate: -172deg;
+  transition-delay: 0s, 0s;
+  z-index: calc(20 + var(--i));
+}
+
+.menu-page {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  backface-visibility: hidden;
+  display: flex;
+}
+
+.menu-page--front img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.menu-page__veil {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, oklch(0.14 0.02 40 / 0.94) 0%, oklch(0.14 0.02 40 / 0.35) 42%, transparent 70%);
+}
+
+.menu-page__gloss {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, oklch(1 0 0 / 0.28) 0%, transparent 38%, transparent 100%);
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+.menu-page--front::after,
+.menu-page--cover-front::after {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 18px;
+  background: linear-gradient(90deg, oklch(0 0 0 / 0.55), transparent);
+  z-index: 3;
+}
+
+.menu-page__label {
+  position: absolute;
+  inset: auto 0 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 1rem;
+  z-index: 4;
+}
+
+.menu-page__course {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 0.6rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--book-gold);
+}
+
+.menu-page__name {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.15rem;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  color: var(--book-fg);
+}
+
+.menu-page__price {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 0.82rem;
+  letter-spacing: 0.06em;
+  color: var(--book-gold);
+}
+
+.menu-page--back {
+  transform: rotateY(180deg) translateZ(1px);
+  flex-direction: column;
+  gap: 0.55rem;
+  padding: 1.4rem 1.25rem;
+  background: radial-gradient(120% 100% at 0% 0%, var(--book-paper-warm), var(--book-paper));
+  color: var(--book-ink);
+}
+
+.menu-page__no {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 0.6rem;
+  letter-spacing: 0.28em;
+  color: var(--book-ink-soft);
+}
+
+.menu-page__backname {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.2rem;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.menu-page__rule {
+  width: 36px;
+  height: 2px;
+  background: var(--book-ember-line);
+}
+
+.menu-page__desc {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  line-height: 1.55;
+  color: var(--book-ink-soft);
+}
+
+.menu-page__notes {
+  display: flex;
+  flex-direction: column;
+  gap: 0.28rem;
+  margin-top: auto;
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  color: var(--book-ink-soft);
+}
+
+.menu-page__notes span {
+  position: relative;
+  padding-left: 0.85rem;
+}
+
+.menu-page__notes span::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.42em;
+  width: 4px;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--book-ember-line);
+}
+
+.menu-page__backprice {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.3rem;
+  letter-spacing: -0.02em;
+  color: var(--book-ember-line);
+}
+
+.menu-foot {
+  position: relative;
+  z-index: 12;
+  margin-top: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--book-fg-soft);
+}
+
+.menu-foot__dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--book-gold);
+}
+
+/* ── Cover page ── */
+.menu-book__page--cover {
+  background: linear-gradient(150deg, oklch(0.3 0.06 40) 0%, oklch(0.16 0.03 35) 100%);
+}
+
+.menu-page--cover-front {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 1.5rem 1.25rem;
+  text-align: center;
+  color: var(--book-fg);
+  background:
+    radial-gradient(80% 60% at 50% 0%, oklch(0.585 0.238 27.5 / 0.45), transparent 70%),
+    linear-gradient(150deg, oklch(0.3 0.06 40) 0%, oklch(0.15 0.03 35) 100%);
+}
+
+.menu-cover__frame {
+  position: absolute;
+  inset: 12px;
+  border: 1px solid oklch(0.85 0.15 88 / 0.45);
+  border-radius: 4px;
+}
+
+.menu-cover__frame::after {
+  content: "";
+  position: absolute;
+  inset: 5px;
+  border: 1px solid oklch(0.85 0.15 88 / 0.18);
+  border-radius: 3px;
+}
+
+.menu-cover__crest {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 999px;
+  border: 1px solid oklch(0.85 0.15 88 / 0.6);
+  font-family: var(--font-hero);
+  font-size: 0.95rem;
+  color: var(--book-gold);
+  z-index: 4;
+}
+
+.menu-cover__kicker {
+  margin-top: 0.4rem;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 0.6rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--book-gold);
+  z-index: 4;
+}
+
+.menu-cover__title {
+  font-family: var(--font-hero);
+  font-size: 2.3rem;
+  line-height: 1;
+  text-transform: uppercase;
+  z-index: 4;
+}
+
+.menu-cover__sub {
+  font-family: var(--font-body);
+  font-size: 0.64rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--book-fg-soft);
+  z-index: 4;
+}
+
+.menu-cover__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-top: 1.1rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: 999px;
+  background: oklch(0.85 0.15 88 / 0.14);
+  border: 1px solid oklch(0.85 0.15 88 / 0.5);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 0.66rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--book-gold);
+  z-index: 4;
+  animation: cta-breathe 2.4s ease-in-out infinite;
+}
+
+.menu-cover__finger svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+  animation: finger-tap 1.6s ease-in-out infinite;
+}
+
+.menu-cover__pulse {
+  position: absolute;
+  bottom: 34px;
+  left: 50%;
+  width: 120px;
+  height: 34px;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  border: 1px solid oklch(0.85 0.15 88 / 0.35);
+  animation: cta-ring 2.4s ease-out infinite;
+  pointer-events: none;
+  z-index: 4;
+}
+
+@keyframes cta-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes finger-tap {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  45% {
+    transform: translateY(-3px) rotate(-6deg);
+  }
+}
+
+@keyframes cta-ring {
+  0% {
+    opacity: 0.6;
+    transform: translateX(-50%) scale(0.9);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) scale(1.35);
+  }
+}
+
+.menu-book.is-open .menu-cover__cta,
+.menu-book.is-open .menu-cover__pulse {
+  animation-play-state: paused;
+}
+
+.menu-page--cover-back {
+  background: linear-gradient(160deg, var(--book-paper-warm), var(--book-paper));
+  flex-direction: column;
+  gap: 0.55rem;
+  padding: 1.4rem 1.25rem;
+  color: var(--book-ink);
+}
+
+@media (max-width: 640px) {
+  .menu-book.is-open {
+    --spine-shift: 70px;
+  }
+  .menu-book,
+  .menu-book__page {
+    width: 200px;
+    height: 290px;
+  }
+}
