@@ -2226,3 +2226,302 @@
     font-size: 3rem;
   }
 }
+
+/* ── Chef Volt — dough-guarding auth robot ─────────────────────────── */
+.kp-confetti {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 9px;
+  height: 13px;
+  pointer-events: none;
+  border-radius: 2px;
+  z-index: 40;
+}
+
+@keyframes volt-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+@keyframes volt-shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-9px); }
+  40% { transform: translateX(8px); }
+  60% { transform: translateX(-5px); }
+  80% { transform: translateX(3px); }
+}
+@keyframes volt-pop {
+  0% { opacity: 0; transform: translateY(8px) scale(0.94); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes volt-spin {
+  to { transform: rotateY(360deg); }
+}
+@keyframes volt-pulse {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.25); }
+}
+
+.volt-shake { animation: volt-shake 0.46s cubic-bezier(0.36, 0.07, 0.19, 0.97); }
+
+.volt-bubble {
+  position: relative;
+  margin-top: 1.25rem;
+  max-width: 22rem;
+  border-radius: 1.25rem;
+  border: 1px solid oklch(0.28 0.03 40 / 0.12);
+  background: oklch(1 0 0 / 0.86);
+  backdrop-filter: blur(10px);
+  padding: 0.7rem 1.1rem;
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-charcoal);
+  box-shadow: 0 18px 34px -26px oklch(0.28 0.03 40 / 0.9);
+  animation: volt-pop 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.volt-bubble::after {
+  content: "";
+  position: absolute;
+  bottom: -7px;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  translate: -50% 0;
+  rotate: 45deg;
+  background: oklch(1 0 0 / 0.86);
+  border-right: 1px solid oklch(0.28 0.03 40 / 0.12);
+  border-bottom: 1px solid oklch(0.28 0.03 40 / 0.12);
+}
+
+.volt {
+  position: relative;
+  margin-top: 1.5rem;
+  width: 240px;
+  height: 260px;
+  perspective: 900px;
+}
+.volt-body {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  animation: volt-float 4.2s ease-in-out infinite;
+}
+.volt-turned .volt-body { transform: rotateY(180deg); }
+.volt-spin .volt-body { animation: volt-spin 0.95s cubic-bezier(0.5, 0, 0.2, 1), volt-float 4.2s ease-in-out infinite; }
+
+.volt-antenna {
+  position: absolute;
+  top: 4px;
+  left: 50%;
+  translate: -50% 0;
+  width: 3px;
+  height: 22px;
+  border-radius: 2px;
+  background: oklch(0.28 0.03 40 / 0.7);
+}
+.volt-antenna-bulb {
+  position: absolute;
+  top: -9px;
+  left: 50%;
+  translate: -50% 0;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, var(--color-gold), var(--color-flame));
+  box-shadow: 0 0 14px oklch(0.585 0.238 27.5 / 0.7);
+  animation: volt-pulse 1.8s ease-in-out infinite;
+}
+
+.volt-hat {
+  position: absolute;
+  top: 22px;
+  left: 50%;
+  translate: -50% 0;
+  width: 116px;
+  height: 40px;
+  border-radius: 40px 40px 12px 12px / 34px 34px 12px 12px;
+  background: linear-gradient(180deg, oklch(0.99 0.008 90), var(--color-cream-deep));
+  box-shadow: inset 0 -6px 10px -6px oklch(0.28 0.03 40 / 0.5), 0 10px 20px -16px oklch(0.28 0.03 40 / 0.9);
+}
+.volt-hat-band {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  translate: -50% 0;
+  width: 104px;
+  height: 12px;
+  border-radius: 6px;
+  background: linear-gradient(180deg, var(--color-flame), var(--color-flame-dark));
+}
+
+.volt-head {
+  position: absolute;
+  top: 58px;
+  left: 50%;
+  translate: -50% 0;
+  width: 132px;
+  height: 106px;
+  border-radius: 30px;
+  transform-style: preserve-3d;
+  background: linear-gradient(180deg, oklch(0.97 0.012 88), oklch(0.88 0.02 82));
+  border: 2px solid oklch(0.28 0.03 40 / 0.35);
+  box-shadow: inset 0 6px 12px oklch(1 0 0 / 0.9), 0 22px 34px -24px oklch(0.28 0.03 40 / 0.95);
+}
+.volt-face {
+  position: absolute;
+  inset: 12px;
+  border-radius: 22px;
+  background: linear-gradient(160deg, oklch(0.32 0.04 40), oklch(0.22 0.03 40));
+  overflow: hidden;
+  backface-visibility: hidden;
+  transition: opacity 0.25s ease;
+}
+.volt-turned .volt-face { opacity: 0; }
+
+.volt-eye {
+  position: absolute;
+  top: 30px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 34% 30%, oklch(0.98 0.05 90), var(--color-gold));
+  box-shadow: 0 0 16px oklch(0.85 0.15 88 / 0.8);
+  translate: var(--lx, 0px) var(--ly, 0px);
+  transition: translate 0.2s ease, height 0.1s ease, top 0.1s ease;
+}
+.volt-eye:nth-of-type(1) { left: 22px; }
+.volt-eye:nth-of-type(2) { right: 22px; }
+.volt-eye-shut { height: 3px; top: 38px; border-radius: 3px; }
+
+.volt-mouth {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  translate: -50% 0;
+  width: 36px;
+  height: 8px;
+  border-radius: 8px;
+  background: var(--color-flame);
+  box-shadow: 0 0 14px oklch(0.585 0.238 27.5 / 0.8);
+  transition: all 0.25s ease;
+}
+.volt-mouth-happy, .volt-mouth-success { width: 44px; height: 18px; border-radius: 0 0 22px 22px; }
+.volt-mouth-excited { width: 26px; height: 24px; border-radius: 50%; }
+.volt-mouth-watching { width: 22px; height: 6px; }
+.volt-mouth-pressed { width: 30px; height: 22px; border-radius: 50%; }
+
+.volt-blush {
+  position: absolute;
+  top: 54px;
+  width: 16px;
+  height: 8px;
+  border-radius: 50%;
+  background: oklch(0.585 0.238 27.5 / 0.45);
+  filter: blur(2px);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.volt-blush-l { left: 12px; }
+.volt-blush-r { right: 12px; }
+.volt-shy .volt-blush, .volt-success .volt-blush, .volt-happy .volt-blush { opacity: 1; }
+
+.volt-back {
+  position: absolute;
+  inset: 12px;
+  border-radius: 22px;
+  background: linear-gradient(160deg, oklch(0.9 0.02 84), oklch(0.78 0.03 78));
+  transform: rotateY(180deg);
+  backface-visibility: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 26px;
+}
+.volt-bolt {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  background: oklch(0.28 0.03 40 / 0.45);
+  box-shadow: inset 0 2px 3px oklch(1 0 0 / 0.6);
+}
+
+.volt-torso {
+  position: absolute;
+  top: 168px;
+  left: 50%;
+  translate: -50% 0;
+  width: 104px;
+  height: 72px;
+  border-radius: 24px;
+  background: linear-gradient(180deg, var(--color-flame), var(--color-flame-dark));
+  border: 2px solid oklch(0.28 0.03 40 / 0.28);
+  box-shadow: inset 0 6px 12px oklch(1 0 0 / 0.25), 0 24px 36px -26px oklch(0.585 0.238 27.5 / 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.volt-chest {
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  color: var(--color-cream);
+}
+.volt-arm {
+  position: absolute;
+  top: 12px;
+  width: 16px;
+  height: 46px;
+  border-radius: 10px;
+  background: linear-gradient(180deg, oklch(0.94 0.015 86), oklch(0.84 0.025 82));
+  border: 2px solid oklch(0.28 0.03 40 / 0.25);
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.volt-arm-l { left: -20px; transform-origin: top center; }
+.volt-arm-r { right: -20px; transform-origin: top center; }
+.volt-excited .volt-arm-l, .volt-success .volt-arm-l { transform: rotate(-38deg); }
+.volt-excited .volt-arm-r, .volt-success .volt-arm-r { transform: rotate(38deg); }
+.volt-shy .volt-arm-l { transform: rotate(18deg); }
+.volt-shy .volt-arm-r { transform: rotate(-18deg); }
+
+.volt-shadow {
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  translate: -50% 0;
+  width: 130px;
+  height: 16px;
+  border-radius: 50%;
+  background: oklch(0.28 0.03 40 / 0.22);
+  filter: blur(8px);
+}
+
+.volt-meter { margin-top: 0.5rem; }
+.volt-meter-bars { display: flex; gap: 5px; }
+.volt-bar {
+  height: 5px;
+  flex: 1;
+  border-radius: 999px;
+  background: oklch(0.28 0.03 40 / 0.12);
+  transition: background 0.3s ease;
+}
+.volt-bar-on { background: var(--color-gold); }
+.volt-bar-3.volt-bar-on, .volt-bar-4.volt-bar-on { background: var(--color-flame); }
+.volt-meter-label {
+  margin-top: 0.35rem;
+  display: block;
+  font-family: var(--font-display);
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: oklch(from var(--color-charcoal) l c h / 0.55);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .volt-body, .volt-antenna-bulb { animation: none !important; }
+}

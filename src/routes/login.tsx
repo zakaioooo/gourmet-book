@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { ArrowRight, Bike, Crown, Lock, Mail, UserRound } from "lucide-react";
+import { Bike, Crown, Eye, EyeOff, Lock, Mail, UserRound } from "lucide-react";
 import { toast } from "sonner";
 
-import { AuthScene } from "@/components/auth/auth-scene";
+import { VoltScene, VoltStrength } from "@/components/auth/chef-volt";
+import { EMAIL_RE, pickLine, useChefVolt } from "@/hooks/use-chef-volt";
 import { ROLE_COPY, ROLE_HOME, signInLocal, type AccountRole } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 
@@ -15,12 +16,12 @@ export const Route = createFileRoute("/login")({
       {
         name: "description",
         content:
-          "Sign in to Kennedy Moon Grill to track live orders, run the owner console or pick up delivery jobs as a rider.",
+          "Sign in to Kennedy Moon Grill — Chef Volt, our dough-guarding robot, keeps your password safe while you track live orders.",
       },
       { property: "og:title", content: "Sign In — Kennedy Moon Grill" },
       {
         property: "og:description",
-        content: "One account for guests, kitchen staff and delivery riders.",
+        content: "One account for guests, kitchen staff and delivery riders — guarded by Chef Volt.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -37,28 +38,36 @@ const ROLES: { key: AccountRole; icon: typeof UserRound }[] = [
 
 function LoginPage() {
   const navigate = useNavigate();
+  const volt = useChefVolt("Beep boop. Hungry human, who goes there?");
   const [role, setRole] = useState<AccountRole>("customer");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [busy, setBusy] = useState(false);
+  const [pass, setPass] = useState("");
+  const [showPass, setShowPass] = useState(false);
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (!email.trim() || !password.trim()) {
-      toast.error("Enter your email and password");
+    if (volt.done) return;
+    if (!EMAIL_RE.test(email.trim())) {
+      volt.complain("That email isn't a real delivery address.");
       return;
     }
-    setBusy(true);
+    if (!pass) {
+      volt.complain("A password would help. Even a small one.");
+      return;
+    }
+
     const account = signInLocal(email, role);
+    volt.celebrate("Oven's hot. Welcome back to Kennedy Moon Grill!");
     toast.success(`Welcome back, ${account.name}`);
-    setTimeout(() => navigate({ to: ROLE_HOME[role] }), 320);
+    setTimeout(() => navigate({ to: ROLE_HOME[role] }), 900);
   }
 
   return (
-    <AuthScene
+    <VoltScene
+      volt={volt}
       eyebrow="Welcome back"
       title="Sign in"
-      subtitle="Pick how you're arriving tonight — we'll drop you straight into the right console."
+      subtitle="Pick how you're arriving tonight — Chef Volt will drop you into the right console."
       footer={
         <>
           New to the grill?{" "}
@@ -79,15 +88,14 @@ function LoginPage() {
                 key={key}
                 type="button"
                 whileTap={{ scale: 0.96 }}
-                onClick={() => setRole(key)}
+                onClick={() => {
+                  setRole(key);
+                  volt.setMoodSafe("watching");
+                  volt.say(`${ROLE_COPY[key].label} mode. Console warming up.`);
+                }}
                 className={cn("role-tile px-2 py-3 text-center", role === key && "role-tile-active")}
               >
-                <Icon
-                  className={cn(
-                    "mx-auto h-5 w-5",
-                    role === key ? "text-flame" : "text-charcoal/50",
-                  )}
-                />
+                <Icon className={cn("mx-auto h-5 w-5", role === key ? "text-flame" : "text-charcoal/50")} />
                 <span className="mt-1.5 block font-display text-[10px] font-extrabold tracking-[0.12em] text-charcoal uppercase">
                   {ROLE_COPY[key].label}
                 </span>
@@ -102,30 +110,87 @@ function LoginPage() {
           <input
             type="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
             placeholder="you@email.com"
             className="auth-field"
             autoComplete="email"
+            onFocus={() => {
+              volt.setTurned(false);
+              volt.setMoodSafe("watching");
+              volt.say("Email first. No spam — I only send pizza.");
+              volt.follow(email);
+            }}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              volt.follow(e.target.value);
+              if (EMAIL_RE.test(e.target.value.trim())) {
+                volt.setMoodSafe("happy");
+                volt.say(pickLine(["Now that's a proper email. Respect.", "Valid address. Quietly delighted."]));
+              } else {
+                volt.setMoodSafe("watching");
+                if (e.target.value.includes("@")) volt.say("Close. My sensors say: not yet.");
+              }
+            }}
           />
         </label>
 
-        <label className="auth-field-wrap block">
-          <Lock className="pointer-events-none absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 text-charcoal/40" />
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
-            className="auth-field"
-            autoComplete="current-password"
-          />
-        </label>
+        <div>
+          <label className="auth-field-wrap block">
+            <Lock className="pointer-events-none absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 text-charcoal/40" />
+            <input
+              type={showPass ? "text" : "password"}
+              value={pass}
+              placeholder="Password"
+              className="auth-field pr-12"
+              autoComplete="current-password"
+              onFocus={() => {
+                volt.setMoodSafe("shy");
+                volt.setTurned(true);
+                volt.resetLook();
+                volt.say("A secret? Say no more. *turns around*");
+              }}
+              onBlur={(e) => {
+                if ((e.relatedTarget as HTMLElement | null)?.dataset?.["peek"]) return;
+                volt.setTurned(false);
+              }}
+              onChange={(e) => {
+                setPass(e.target.value);
+                volt.scorePassword(e.target.value);
+              }}
+            />
+            <button
+              type="button"
+              data-peek="1"
+              aria-label={showPass ? "Hide password" : "Show password"}
+              className="absolute top-1/2 right-4 -translate-y-1/2 text-charcoal/45 transition hover:text-flame"
+              onClick={() => {
+                setShowPass((s) => !s);
+                if (!showPass) volt.say("Revealing it? Good thing I'm facing the wall.");
+              }}
+            >
+              {showPass ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </button>
+          </label>
+          <VoltStrength volt={volt} />
+        </div>
 
-        <button type="submit" disabled={busy} className="auth-cta">
-          Enter {ROLE_COPY[role].destination}
-          <ArrowRight className="h-4 w-4" />
+        <button
+          ref={volt.btnRef}
+          type="submit"
+          className="auth-cta"
+          onMouseEnter={() => volt.hype(true)}
+          onMouseLeave={() => volt.hype(false)}
+          onFocus={() => volt.hype(true)}
+          onBlur={() => volt.hype(false)}
+          onPointerDown={() => {
+            volt.setPressedMood(true);
+            volt.say(pickLine(["Ahh. That's the stuff.", "Mmm. Satisfying.", "Beep. Do that again."]));
+          }}
+          onPointerUp={() => volt.setPressedMood(false)}
+        >
+          <span aria-hidden>🍕</span>
+          {volt.done ? "Order up ✓" : `Enter ${ROLE_COPY[role].destination}`}
         </button>
       </form>
-    </AuthScene>
+    </VoltScene>
   );
 }
