@@ -1628,7 +1628,8 @@
   font-size: clamp(3.5rem, 14vw, 13rem);
   line-height: 0.8;
   color: var(--book-fg);
-  mix-blend-mode: exclusion;
+  mix-blend-mode: overlay;
+  opacity: 0.55;
   pointer-events: none;
   z-index: 0;
 }
@@ -2212,5 +2213,16 @@
   .menu-book__page {
     width: 200px;
     height: 290px;
+  }
+}
+
+@media (min-width: 768px) {
+  .menu-book,
+  .menu-book__page {
+    width: 300px;
+    height: 420px;
+  }
+  .menu-cover__title {
+    font-size: 3rem;
   }
 }
