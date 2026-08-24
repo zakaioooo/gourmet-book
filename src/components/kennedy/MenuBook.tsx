@@ -84,7 +84,13 @@ export function MenuBook() {
             <span className="menu-cover__crest">K</span>
             <span className="menu-cover__kicker">Moon Grill Narowal</span>
             <span className="menu-cover__title">Kennedy</span>
+            <span className="menu-cover__flourish" aria-hidden="true">
+              <span />
+              <i />
+              <span />
+            </span>
             <span className="menu-cover__sub">Charcoal · Dum · Wood-Fired</span>
+
             <span className="menu-cover__cta">
               <span className="menu-cover__finger" aria-hidden="true">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
