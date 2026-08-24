@@ -2195,12 +2195,14 @@
 }
 
 .menu-page--cover-back {
+  transform: rotateY(180deg) translateZ(1px);
   background: linear-gradient(160deg, var(--book-paper-warm), var(--book-paper));
   flex-direction: column;
   gap: 0.55rem;
   padding: 1.4rem 1.25rem;
   color: var(--book-ink);
 }
+
 
 @media (max-width: 640px) {
   .menu-book.is-open {
