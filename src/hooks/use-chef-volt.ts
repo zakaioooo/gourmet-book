@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
+
 export type VoltMood = "idle" | "watching" | "happy" | "excited" | "pressed" | "shy" | "success";
 
 export const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
@@ -12,6 +14,9 @@ export const pickLine = <T,>(a: T[]): T => a[Math.floor(Math.random() * a.length
  * Pure presentation state; no auth logic lives here.
  */
 export function useChefVolt(firstLine: string) {
+  const reducedMotion = useReducedMotion();
+  const reducedRef = useRef(false);
+  reducedRef.current = reducedMotion;
   const [mood, setMood] = useState<VoltMood>("idle");
   const [turned, setTurned] = useState(false);
   const [hyped, setHyped] = useState(false);
@@ -44,6 +49,7 @@ export function useChefVolt(firstLine: string) {
   }, []);
 
   const follow = useCallback((value: string) => {
+    if (reducedRef.current) return;
     const r = Math.min(value.length / 22, 1);
     setLook({ x: -6 + 12 * r, y: 5 });
     setTilt({ ry: -5 + 10 * r, rx: -8 });
@@ -66,7 +72,7 @@ export function useChefVolt(firstLine: string) {
     const loop = () => {
       t = setTimeout(
         () => {
-          if (!doneRef.current && !turned) {
+          if (!doneRef.current && !turned && !reducedRef.current) {
             setBlink(true);
             setTimeout(() => setBlink(false), 150);
           }
@@ -84,7 +90,7 @@ export function useChefVolt(firstLine: string) {
     let pending = false;
     const onMove = (e: MouseEvent) => {
       const active = document.activeElement;
-      if (doneRef.current || (active && active.tagName === "INPUT")) return;
+      if (doneRef.current || reducedRef.current || (active && active.tagName === "INPUT")) return;
       if (pending) return;
       pending = true;
       requestAnimationFrame(() => {
@@ -103,6 +109,7 @@ export function useChefVolt(firstLine: string) {
   }, [turned]);
 
   const confetti = useCallback(() => {
+    if (reducedRef.current) return;
     const host = sceneRef.current;
     const origin = btnRef.current?.getBoundingClientRect();
     if (!host || !origin) return;
@@ -139,9 +146,11 @@ export function useChefVolt(firstLine: string) {
         say(text);
         setMoodSafe("watching");
       }, 320);
-      setShaking(false);
-      requestAnimationFrame(() => setShaking(true));
-      setTimeout(() => setShaking(false), 460);
+      if (!reducedRef.current) {
+        setShaking(false);
+        requestAnimationFrame(() => setShaking(true));
+        setTimeout(() => setShaking(false), 460);
+      }
     },
     [say, setMoodSafe],
   );
@@ -156,7 +165,7 @@ export function useChefVolt(firstLine: string) {
       say(text);
       setLook({ x: 0, y: 0 });
       setTilt({ ry: 0, rx: 0 });
-      if (typeof matchMedia === "function" && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      if (!reducedRef.current) {
         setSpinning(true);
         setTimeout(() => setSpinning(false), 950);
         confetti();
@@ -182,6 +191,7 @@ export function useChefVolt(firstLine: string) {
   );
 
   return {
+    reducedMotion,
     mood,
     turned,
     hyped,
