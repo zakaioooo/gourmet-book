@@ -1,8 +1,9 @@
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
-import { ChefHat } from "lucide-react";
+import { ChefHat, Pause, Play } from "lucide-react";
 
 import type { ChefVolt } from "@/hooks/use-chef-volt";
+import { readCalmOverride, setCalmOverride } from "@/hooks/use-reduced-motion";
 import { cn } from "@/lib/utils";
 
 /**
